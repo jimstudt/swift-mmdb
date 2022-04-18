@@ -16,6 +16,22 @@ final class MMDB_Tests: XCTestCase {
             return
         }
         
-        XCTAssertEqual( mmdb.text, "Hello, World!")
+        guard case let .partial(zero64) = mmdb.search(value: 0, bits: 64),
+              case let .partial(zero96) = mmdb.search(starting: zero64, value: 0, bits: 32) else {
+            XCTFail("Failed to search zero96 partial")
+            return
+        }
+        
+        guard case let .value(core) = mmdb.search(starting: zero96, value: 0xc7d9af01 << 32, bits: 32) else {
+            XCTFail("Failed to search the old core.federated.com server")
+            return
+        }
+        core.dump()
+        
+        // 192.0.2.0 should be usable as a test network according to RFC 5737. It probably isn't located.
+        guard case .notFound = mmdb.search( starting: zero96, value: 0xc0000200 << 32, bits: 32) else {
+            XCTFail("Failed to get a 'notfound' for RFC 5737 Test-Net-1")
+            return
+        }
     }
 }
