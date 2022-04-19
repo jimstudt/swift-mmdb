@@ -66,7 +66,11 @@ public class GeoLite2CountryDatabase {
         case 0:
             break  // not a valid address
         default:
-            let (a,b,c,d) = ipv6.__u6_addr.__u6_addr32
+	#if canImport(Glibc)
+	    let (a,b,c,d) = ipv6.__in6_u.__u6_addr32
+	#else
+	    let (a,b,c,d) = ipv6.__u6_addr.__u6_addr32
+	#endif
             let parts = [ a.bigEndian, b.bigEndian, c.bigEndian, d.bigEndian]
             var n : UInt = 0
             for p in parts {
