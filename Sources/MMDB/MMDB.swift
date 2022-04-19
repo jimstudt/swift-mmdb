@@ -81,7 +81,7 @@ public class MMDB {
     
     /// A *value* read from an MMDB file. This parallels the `FieldType` tags, but includes an associated value
     /// and you can't mix rawValues and associated values
-    indirect enum Value {
+    public indirect enum Value {
         case string(String)
         case map( [String:Value])
         case uint16( UInt16)
@@ -387,7 +387,7 @@ public class MMDB {
         }
     }
     
-    enum SearchResult {
+    public enum SearchResult {
         case notFound
         case partial(UInt)
         case value(Value)

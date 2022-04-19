@@ -13,7 +13,7 @@ import Foundation
 /// It is expected that a server will create one of these at startup, and then perhaps replace it
 /// with a new one from time to time to get updates.  The underlying data files from MaxMind
 /// only update once a week for the free developer files.
-class GeoLite2CountryDatabase {
+public class GeoLite2CountryDatabase {
     private let db : MMDB
     private let zero96 : UInt
     
