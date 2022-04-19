@@ -58,8 +58,6 @@ public class MMDB {
                 fatalError("Field type '\(self)' not supported")
             case .endMarker:
                 fatalError("Field type '\(self)' not supported")
-            case .boolean:
-                fatalError("Field type '\(self)' not supported")
             case .float:
                 fatalError("Field type '\(self)' not supported")
                 
@@ -74,6 +72,8 @@ public class MMDB {
                 fatalError("Field type '.array' can not be scanned by FieldType")
             case .pointer:
                 fatalError("Field type '.map' can not be scanned by FieldType")
+            case .boolean:
+                fatalError("Field type '.boolean' can not be scanned by FieldType")
             }
         }
     }
@@ -92,6 +92,7 @@ public class MMDB {
         case double( Double)
         case bytes( [UInt8] )
         case array( [Value])
+        case boolean( Bool)
         
         /// Dump out a value using print().
         ///
@@ -127,6 +128,8 @@ public class MMDB {
                 print( "\(indent){")
                 elements.forEach{ $0.dump( level: level+1)}
                 print( "\(indent)}")
+            case .boolean(let v):
+                print( "\(indent)\(v ? "true" : "false")")
             }
         }
     }
@@ -270,6 +273,8 @@ public class MMDB {
                 
                 var np : Int = sectionStart + Int(p)
                 return readValue(pointer: &np, sectionStart: sectionStart)
+            case .boolean:
+                return .boolean( payloadSize != 0)
             default:
                 let r = fieldType.scan(bytes: bytes[pointer ..< pointer + payloadSize])
                 pointer += payloadSize

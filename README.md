@@ -30,6 +30,28 @@ If you want to know more, then you will need a more complete database than I
 am using and to use the `MMDB` layer instead of the `GeoLite2CountryDatabase`
 layer, but it isn't hard. Just feed addresses into its `.search` method.
 
+## What Do You Promise?
+
+- Once your MMDB constructor returns the database, there will be no I/O 
+  done. No disk reading (unless you are swapping) and no network access.
+- No amount of corrupted database file will allow it to access outside
+  its own bytes. (I reengineered away from 'unsafe' to guarantee this.)
+- It is possible to create a database file which will recurse beyond any 
+  stack you might have. I do not have a limiter. Use a database you trust.
+- IP lookups take 200-300µS on the original M1 Mac Mini. That's fast enough
+  for me, for now. 
+  
+## What Can Go Wrong?
+
+- It is possible to create a database file which will recurse beyond any 
+  stack you might have. I do not have a limiter. Use a database you trust.
+- It is possible to generate an arithmetic exception from a corrupt database.
+- Some data types, (int32, uint128, float, dataCacheContainer, endMarker), are
+  not implemented and will give you a `fatalError`. I need to find a database which
+  uses them to test them.
+- I have only tested on 24 bit pointer databases. I don't have access to
+  anything larger.
+  
 ## What More Can I Get?
 
 [MaxMind](https://dev.maxmind.com/) has a number of databases for looking up
