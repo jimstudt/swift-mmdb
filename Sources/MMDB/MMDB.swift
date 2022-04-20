@@ -42,6 +42,16 @@ public class MMDB {
                 }
                 
                 return .double(r)
+            case .float:
+                if bytes.count != 4 {
+                    fatalError("Wrong payload size to 'float' value")
+                }
+                let r = bytes.withUnsafeBytes{ (_ body: (UnsafeRawBufferPointer)) -> Float in
+                    let v = body.bindMemory(to: Float.self).baseAddress!.pointee
+                    return v
+                }
+                
+                return .float(r)
             case .bytes:
                 return .bytes( Array(bytes))
             case .uint16:
@@ -51,14 +61,23 @@ public class MMDB {
             case .uint64:
                 return .uint64( bytes.reduce(0, { ($0 << 8) | UInt64($1)} ))
             case .int32:
-                fatalError("Field type '\(self)' not supported")
+                let u = bytes.reduce(0, { ($0 << 8) | UInt32($1)} )
+                if u & 0x80000000 == 0 {
+                    return .int32( Int32(u))
+                } else {
+                    return .int32( -Int32( ~u) - 1)
+                }
             case .uint128:
-                fatalError("Field type '\(self)' not supported")
+                var b = Array(bytes)
+                if bytes.count < 16 {
+                    b = b + Array( repeating: 0, count: 16 - bytes.count)
+                }
+                let high = b[0..<8].reduce(0, { ($0 << 8) | UInt64($1)} )
+                let low = b[8..<16].reduce(0, { ($0 << 8) | UInt64($1)} )
+                return .uint128(high: high, low: low)
             case .dataCacheContainer:
                 fatalError("Field type '\(self)' not supported")
             case .endMarker:
-                fatalError("Field type '\(self)' not supported")
-            case .float:
                 fatalError("Field type '\(self)' not supported")
                 
             //
@@ -90,6 +109,7 @@ public class MMDB {
         case uint128( high: UInt64, low: UInt64)
         case int32( Int32)
         case double( Double)
+        case float( Float)
         case bytes( [UInt8] )
         case array( [Value])
         case boolean( Bool)
@@ -122,6 +142,8 @@ public class MMDB {
                 print( "\(indent)\(v) i32")
             case .double(let v):
                 print( "\(indent)\(v) double")
+            case .float(let v):
+                print( "\(indent)\(v) float")
             case .bytes(let b):
                 print( "\(indent)[\(b.count) bytes]")
             case .array(let elements):
@@ -163,6 +185,7 @@ public class MMDB {
             //
             // Read the ControlByte
             //
+            if !bytes.indices.contains(pointer) { return nil }
             let controlByte = bytes[pointer]
             pointer += 1
             
@@ -455,6 +478,29 @@ public class MMDB {
 }
 
 extension MMDB {
+    func search<T>( value: [T], bits: Int) -> SearchResult where T : FixedWidthInteger {
+        var n : UInt = 0
+        var togo = bits
+        
+        for v in value {
+            let c = UInt(v) << (64 - T.bitWidth)
+            switch search( starting: n, value: c, bits: min( togo, T.bitWidth)) {
+            case .notFound:
+                return .notFound
+            case .partial(let nn):
+                n = nn
+                togo -= T.bitWidth
+            case .value(let vv):
+                return .value(vv)
+            case .failed(let m):
+                return .failed(m)
+            }
+        }
+        return .partial(n)
+    }
+}
+
+extension MMDB {
     /// Get the MMDB.Value record for an IP address in text form. Does not look up host names.
     /// You will need to use a numeric form. It accepts both IPv4 and IPv6 addresses.
     /// - Parameter address: A numeric IPv4 or IPv6 address as accepted by `inet_addr`
@@ -496,5 +542,51 @@ extension MMDB {
         }
         
         return .notFound
+    }
+}
+
+extension MMDB {
+    public func enumerate( _ handler: ([UInt32],Int)->Void ) {
+        func crunch( _ path: [UInt8]) -> [UInt32] {
+            var result : [UInt32] = []
+            var accumulate : UInt32 = 0
+            
+            for i in path.indices {
+                accumulate = (accumulate << 1) + UInt32(path[i] & 1)
+                if (i % 32) == 31 {
+                    result.append(accumulate)
+                    accumulate = 0
+                }
+            }
+            if path.count % 32 != 0 {
+                accumulate = accumulate << ( 32 - (path.count % 32) )
+                result.append(accumulate)
+            }
+            return result
+        }
+        
+        func doNode( _ n: UInt, path: [UInt8] ) {
+            // Catch and abort loops in the search tree
+            if ipVersion == 4 && path.count >= 32 { return }
+            if ipVersion == 6 && path.count >= 128 { return }
+            
+            let left = node( n, side: 0)
+            if left > nodeCount {
+                handler( crunch(path + [0]), path.count+1 )
+            } else if left < nodeCount {
+                doNode( left, path: path + [0])
+            }
+            // = nodeCount means 'not found'
+            
+            let right = node( n, side:1)
+            if right > nodeCount {
+                handler( crunch(path + [1]), path.count+1)
+            } else if right < nodeCount {
+                doNode( right, path: path + [1])
+            }
+            // = nodeCount means 'not found'
+        }
+        
+        doNode( 0, path:[])
     }
 }
