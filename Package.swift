@@ -24,6 +24,6 @@ let package = Package(
         .testTarget(
             name: "MMDBTests",
             dependencies: ["MMDB"],
-            resources: [ .copy("TestData") ] ),
+            resources: [ .copy("TestData"), .copy("../MaxMind-DB/test-data") ] ),
     ]
 )
