@@ -49,6 +49,14 @@ layer, but it isn't hard. Just feed addresses into its `.search` method.
 - Some data types, (int32, uint128, float, dataCacheContainer, endMarker), are
   not implemented and will give you a `fatalError`. I need to find a database which
   uses them to test them.
+
+## Building
+
+- clone the repository
+- Run the tests. If it complains about not having a test-data file, then go to your
+  checked out copy and `git submodule update --init --recursive` since Xcode and 
+  `swift build` probably didn't do that for you. You only need to do that once after checkout.
+  If your `Tests/MMDBTests/MaxMind-DB` directory is empty, then you need to do this.
   
 ## What More Can I Get?
 
