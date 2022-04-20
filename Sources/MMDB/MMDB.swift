@@ -318,6 +318,8 @@ public class MMDB {
     let databaseType : String
     let dataSectionStart : UInt
     
+    lazy var ipv4Root : UInt = computeIPv4Root()
+    
     private let searchTreeSize : UInt
     
     public init?( data: Data) {
@@ -373,6 +375,16 @@ public class MMDB {
         }
         self.init( data: d)
     }
+    
+    func computeIPv4Root() -> UInt {
+        if ipVersion == 6,
+           case let .partial(zero64) = search(value: 0, bits: 64),
+           case let .partial(zero96) = search(starting: zero64, value: 0, bits: 32) {
+            return zero96
+        }
+        return 0
+    }
+    
     
     private func node( _ number: UInt, side: UInt) -> UInt {
         switch recordSize {
@@ -439,5 +451,50 @@ public class MMDB {
             }
         }
         return .partial(n)
+    }
+}
+
+extension MMDB {
+    /// Get the MMDB.Value record for an IP address in text form. Does not look up host names.
+    /// You will need to use a numeric form. It accepts both IPv4 and IPv6 addresses.
+    /// - Parameter address: A numeric IPv4 or IPv6 address as accepted by `inet_addr`
+    /// or `inet_pton`
+    /// - Returns: The MMDB.Value record found, or a .notFound, or maybe a .failure if your name
+    /// was not valid.
+    public func search( address: String) -> MMDB.SearchResult {
+        let ipv4 = inet_addr(address)
+        if ipv4 != UInt32.max {
+            return search(starting: ipv4Root, value: UInt( ipv4.bigEndian)<<32, bits: 32)
+        }
+        
+        var ipv6 = in6_addr()
+        switch withUnsafeMutablePointer(to: &ipv6, ({ inet_pton(AF_INET6, address, UnsafeMutablePointer($0))})) {
+        case -1:
+            break  // error
+        case 0:
+            break  // not a valid address
+        default:
+    #if canImport(Glibc)
+        let (a,b,c,d) = ipv6.__in6_u.__u6_addr32
+    #else
+        let (a,b,c,d) = ipv6.__u6_addr.__u6_addr32
+    #endif
+            let parts = [ a.bigEndian, b.bigEndian, c.bigEndian, d.bigEndian]
+            var n : UInt = 0
+            for p in parts {
+                switch search(starting: n, value: UInt(p)<<32, bits: 32) {
+                case .notFound:
+                    return .notFound
+                case .partial(let nn):
+                    n = nn
+                case .value(let v):
+                    return .value(v)
+                case .failed(let m):
+                    return .failed(m)
+                }
+            }
+        }
+        
+        return .notFound
     }
 }
