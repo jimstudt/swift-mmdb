@@ -1,0 +1,3 @@
+[submodule "Tests/MMDBTests/MaxMind-DB"]
+	path = Tests/MMDBTests/MaxMind-DB
+	url = https://github.com/maxmind/MaxMind-DB.git

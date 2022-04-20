@@ -22,8 +22,8 @@ class GeoLite2_Tests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
-        guard let fileURL = Bundle.module.url(forResource: "GeoLite2-Country", withExtension: "mmdb", subdirectory: "TestData") else {
-            XCTFail("Unable to find test GeoLite2-Country.mmdb file.")
+        guard let fileURL = Bundle.module.url(forResource: "GeoLite2-Country-Test", withExtension: "mmdb", subdirectory: "test-data") else {
+            XCTFail("Unable to find test GeoLite2-Country-Test.mmdb file.")
             return
         }
         
@@ -34,37 +34,49 @@ class GeoLite2_Tests: XCTestCase {
         
         XCTAssertEqual(db.databaseType, "GeoLite2-Country")
         
-        guard case let .value(core) = db.search(address: "199.217.175.1") else {
-            XCTFail("Failed to search the old core.federated.com server")
+        guard case let .value(core) = db.search(address: "2.125.160.216") else {
+            XCTFail("Failed to search some EU address")
             return
         }
         core.dump()
 
-        guard case let .value(somewhere) = db.search(address: "2001:0b28:f23f:f005:0000:0000:0000:000a") else {
-            XCTFail("Failed to search the ipv6 address")
+        guard case let .value(somewhere) = db.search(address: "2001:270::0") else {
+            XCTFail("Failed to search a KR ipv6 address")
             return
         }
         somewhere.dump()
         
-        XCTAssertEqual( db.countryCode(address: "2001:0b28:f23f:f005:0000:0000:0000:000a"), "AG")
+        XCTAssertEqual( db.countryCode(address: "2001:270::0"), "KR")
 
     }
 
     func testCountryPerformanceIPv4() throws {
-        guard let fileURL = Bundle.module.url(forResource: "GeoLite2-Country", withExtension: "mmdb", subdirectory: "TestData") else {
-            XCTFail("Unable to find test GeoLite2-Country.mmdb file.")
+        guard let fileURL = Bundle.module.url(forResource: "GeoLite2-Country-Test", withExtension: "mmdb", subdirectory: "test-data") else {
+            XCTFail("Unable to find test GeoLite2-Country-Test.mmdb file.")
             return
         }
-        
+
         guard let db = GeoLite2CountryDatabase(from: fileURL) else {
             XCTFail("Failed to open MMDB")
             return
         }
 
-        let ntp4Servers = [ "132.163.96.5", "132.163.97.5", "128.138.141.177", "200.160.7.186", "217.31.202.100",
-                           "83.92.2.24", "193.93.164.193", "189.136.149.62", "89.175.20.7", "212.111.203.225"]
+        let hosts = [ "2.125.160.216",
+                      "50.114.0.0",
+                      "67.43.156.0",
+                      "81.2.69.142",
+                      "81.2.69.144",
+                      "81.2.69.160",
+                      "81.2.69.192",
+                      "89.160.20.112",
+                      "89.160.20.128",
+                      "111.235.160.0",
+                      "202.196.224.0",
+                      "216.160.83.56",
+                      "217.65.48.0" ]
+
         self.measure {
-            for addr in ntp4Servers {
+            for addr in hosts {
                 guard case .value(_) = db.search(address: addr) else {
                     XCTFail("Failed to search \(addr)")
                     return
@@ -76,20 +88,28 @@ class GeoLite2_Tests: XCTestCase {
     }
 
     func testCountryPerformanceIPv6() throws {
-        guard let fileURL = Bundle.module.url(forResource: "GeoLite2-Country", withExtension: "mmdb", subdirectory: "TestData") else {
-            XCTFail("Unable to find test GeoLite2-Country.mmdb file.")
+        guard let fileURL = Bundle.module.url(forResource: "GeoLite2-Country-Test", withExtension: "mmdb", subdirectory: "test-data") else {
+            XCTFail("Unable to find test GeoLite2-Country-Test.mmdb file.")
             return
         }
-        
+
         guard let db = GeoLite2CountryDatabase(from: fileURL) else {
             XCTFail("Failed to open MMDB")
             return
         }
 
-        let ntp6Servers = [ "2001:67c:21c:123::1", "2a04:6480:101::221", "2001:12ff:0:7::197", "2001:470:1f07:d::5", "2001:4b20::beef:1:16",
-                           "2001:720:1410:101f::15", "2001:67c:6c:58::77", "2001:2f8:29:100::fff3", "2a01:3f7:2:1::1", "2604:4080:111d:2010:2ee3:98d7:48eb:60b4"]
+        let hosts = [ "2001:2e0::1",
+                      "2001:2e8::2",
+                      "2001:2f0::3",
+                      "2001:2f8::4",
+                      "2a02:cf40::5",
+                      "2a02:cf80::6",
+                      "2a02:cfc0::7",
+                      "2a02:d000::8",
+                      "2a02:d040::9",
+                      "2a02:d080::10"]
         self.measure {
-            for addr in ntp6Servers {
+            for addr in hosts {
                 guard case .value(_) = db.search(address: addr) else {
                     XCTFail("Failed to search \(addr)")
                     return

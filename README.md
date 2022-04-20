@@ -49,8 +49,6 @@ layer, but it isn't hard. Just feed addresses into its `.search` method.
 - Some data types, (int32, uint128, float, dataCacheContainer, endMarker), are
   not implemented and will give you a `fatalError`. I need to find a database which
   uses them to test them.
-- I have only tested on 24 bit pointer databases. I don't have access to
-  anything larger.
   
 ## What More Can I Get?
 
@@ -62,11 +60,6 @@ freely available to developers.
 I don't know if anyone else provides data in this format. It is reasonably 
 well suited to attaching data to partitions of natural numbers in a fairly
 compact format.
-
-## All the Tests Fail!
-
-You need a database. Download a copy of GeoLite2-Country.mmdb and put it in 
-the Tests/MMDBTests/TestData folder.
 
 ## Why?
 

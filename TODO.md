@@ -5,4 +5,6 @@
   cause any array out of bounds errors and kill the program.
 - Eliminate all the `fatalError` calls in MMDB. Those are just me marking
   places I haven't implemented something.
-- Get the test databases from https://github.com/maxmind/MaxMind-DB 
+- Add more tests for the MaxMind test databases.
+- Move the IP address logic of GeoLite2's search into MMDB.
+

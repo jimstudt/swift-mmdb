@@ -24,6 +24,13 @@ let package = Package(
         .testTarget(
             name: "MMDBTests",
             dependencies: ["MMDB"],
-            resources: [ .copy("TestData"), .copy("../MaxMind-DB/test-data") ] ),
+            exclude: ["MaxMind-DB/source-data",
+                      "MaxMind-DB/bad-data",
+                      "MaxMind-DB/MaxMind-DB-spec.md",
+                      "MaxMind-DB/LICENSE",
+                      "MaxMind-DB/perltidyrc",
+                      "MaxMind-DB/tidyall.ini",
+                      "MaxMind-DB/README.md"],
+            resources: [ .copy("MaxMind-DB/test-data") ] ),
     ]
 )
