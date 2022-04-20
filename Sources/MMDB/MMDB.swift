@@ -293,9 +293,9 @@ public class MMDB {
         func node7( _ number: UInt, side: UInt) -> UInt {
             let base = Int(number * 7)
             if side == 0 {
-                return ( (UInt(bytes[base+4] >> 4 ) << 24) + (UInt(bytes[base]) << 16) | (UInt( bytes[base+1]) << 8) | UInt(bytes[base+2]))
+                return ( (UInt(bytes[base+3] >> 4 ) << 24) + (UInt(bytes[base]) << 16) | (UInt( bytes[base+1]) << 8) | UInt(bytes[base+2]))
             } else {
-                return ( (UInt(bytes[base+4] & 0x0f ) << 24) + (UInt(bytes[base+3]) << 16) | (UInt( bytes[base+4]) << 8) | UInt(bytes[base+5]))
+                return ( (UInt(bytes[base+3] & 0x0f ) << 24) + (UInt(bytes[base+4]) << 16) | (UInt( bytes[base+5]) << 8) | UInt(bytes[base+6]))
             }
         }
         func node8( _ number: UInt, side: UInt) -> UInt {
