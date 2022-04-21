@@ -218,6 +218,42 @@ final class MMDB_Tests: XCTestCase {
         XCTFail("Opened MMDB with insane node count: \(mmdb.nodeCount)")
     }
 
+    func testCyclicDataStructure() throws {
+        readAllAcceptErrors(forResource: "cyclic-data-structure", subdirectory: "bad-data/maxminddb-golang")
+    }
+    
+    func testInvalidBytesLength() throws {
+        readAllAcceptErrors(forResource: "invalid-bytes-length", subdirectory: "bad-data/maxminddb-golang")
+    }
+
+    func testInvalidDataRecordOffset() throws {
+        readAllAcceptErrors(forResource: "invalid-data-record-offset", subdirectory: "bad-data/maxminddb-golang")
+    }
+
+    func testInvalidMapKeyLength() throws {
+        readAllAcceptErrors(forResource: "invalid-map-key-length", subdirectory: "bad-data/maxminddb-golang")
+    }
+
+    func testInvalidStringLength() throws {
+        readAllAcceptErrors(forResource: "invalid-string-length", subdirectory: "bad-data/maxminddb-golang")
+    }
+
+    func testMetadataIsAnUInt128() throws {
+        readAllAcceptErrors(forResource: "metadata-is-an-uint128", subdirectory: "bad-data/maxminddb-golang")
+    }
+
+    func testUnexpectedBytes() throws {
+        readAllAcceptErrors(forResource: "unexpected-bytes", subdirectory: "bad-data/maxminddb-golang")
+    }
+
+    func testBadUnicodeInMapKey() throws {
+        readAllAcceptErrors(forResource: "bad-unicode-in-map-key", subdirectory: "bad-data/maxminddb-python")
+    }
+
+    func testOffsetIntegerOverflow() throws {
+        readAllAcceptErrors(forResource: "libmaxminddb-offset-integer-overflow", subdirectory: "bad-data/maxminddb-golang")
+    }
+
 
 }
 

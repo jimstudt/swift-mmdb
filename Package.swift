@@ -25,12 +25,11 @@ let package = Package(
             name: "MMDBTests",
             dependencies: ["MMDB"],
             exclude: ["MaxMind-DB/source-data",
-                      "MaxMind-DB/bad-data",
                       "MaxMind-DB/MaxMind-DB-spec.md",
                       "MaxMind-DB/LICENSE",
                       "MaxMind-DB/perltidyrc",
                       "MaxMind-DB/tidyall.ini",
                       "MaxMind-DB/README.md"],
-            resources: [ .copy("MaxMind-DB/test-data") ] ),
+            resources: [ .copy("MaxMind-DB/test-data"), .copy("MaxMind-DB/bad-data") ] ),
     ]
 )
