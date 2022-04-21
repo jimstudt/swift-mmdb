@@ -376,5 +376,285 @@ final class MMDB_Tests: XCTestCase {
         }
     }
 
+    func testGeoIP2AnonymousIP() throws {
+        guard let fileURL = Bundle.module.url(forResource: "GeoIP2-Anonymous-IP-Test", withExtension: "mmdb", subdirectory: "test-data"),
+              let mmdb = MMDB(from: fileURL) else {
+            XCTFail("Failed to open MMDB")
+            return
+        }
+
+        mmdb.enumerate{ (bits:[UInt32], count: Int) in
+            let hex = bits.reduce("") { $0 +  String(format:"%08x", $1) }
+            print( "\(hex)/\(count)" )
+            
+            guard case let .value(v) = mmdb.search(value: bits, bits: count) else {
+                XCTFail("failed to searc \(hex)/\(count)")
+                return
+            }
+            v.dump()
+        }
+    }
+
+    func testGeoIP2CityTest() throws {
+        guard let fileURL = Bundle.module.url(forResource: "GeoIP2-City-Test", withExtension: "mmdb", subdirectory: "test-data"),
+              let mmdb = MMDB(from: fileURL) else {
+            XCTFail("Failed to open MMDB")
+            return
+        }
+
+        mmdb.enumerate{ (bits:[UInt32], count: Int) in
+            let hex = bits.reduce("") { $0 +  String(format:"%08x", $1) }
+            print( "\(hex)/\(count)" )
+            
+            guard case let .value(v) = mmdb.search(value: bits, bits: count) else {
+                XCTFail("failed to searc \(hex)/\(count)")
+                return
+            }
+            v.dump()
+        }
+    }
+
+    func testGeoIP2ConnectionTypeTest() throws {
+        guard let fileURL = Bundle.module.url(forResource: "GeoIP2-Connection-Type-Test", withExtension: "mmdb", subdirectory: "test-data"),
+              let mmdb = MMDB(from: fileURL) else {
+            XCTFail("Failed to open MMDB")
+            return
+        }
+
+        mmdb.enumerate{ (bits:[UInt32], count: Int) in
+            let hex = bits.reduce("") { $0 +  String(format:"%08x", $1) }
+            print( "\(hex)/\(count)" )
+            
+            guard case let .value(v) = mmdb.search(value: bits, bits: count) else {
+                XCTFail("failed to searc \(hex)/\(count)")
+                return
+            }
+            v.dump()
+        }
+    }
+
+    func testGeoIP2DensityIncomeTest() throws {
+        guard let fileURL = Bundle.module.url(forResource: "GeoIP2-DensityIncome-Test", withExtension: "mmdb", subdirectory: "test-data"),
+              let mmdb = MMDB(from: fileURL) else {
+            XCTFail("Failed to open MMDB")
+            return
+        }
+
+        mmdb.enumerate{ (bits:[UInt32], count: Int) in
+            let hex = bits.reduce("") { $0 +  String(format:"%08x", $1) }
+            print( "\(hex)/\(count)" )
+            
+            guard case let .value(v) = mmdb.search(value: bits, bits: count) else {
+                XCTFail("failed to searc \(hex)/\(count)")
+                return
+            }
+            v.dump()
+        }
+    }
+
+    func testGeoIP2DomainTest() throws {
+        guard let fileURL = Bundle.module.url(forResource: "GeoIP2-Domain-Test", withExtension: "mmdb", subdirectory: "test-data"),
+              let mmdb = MMDB(from: fileURL) else {
+            XCTFail("Failed to open MMDB")
+            return
+        }
+
+        mmdb.enumerate{ (bits:[UInt32], count: Int) in
+            let hex = bits.reduce("") { $0 +  String(format:"%08x", $1) }
+            print( "\(hex)/\(count)" )
+            
+            guard case let .value(v) = mmdb.search(value: bits, bits: count) else {
+                XCTFail("failed to searc \(hex)/\(count)")
+                return
+            }
+            v.dump()
+        }
+    }
+
+    func testGeoIP2EnterpriseTest() throws {
+        guard let fileURL = Bundle.module.url(forResource: "GeoIP2-Enterprise-Test", withExtension: "mmdb", subdirectory: "test-data"),
+              let mmdb = MMDB(from: fileURL) else {
+            XCTFail("Failed to open MMDB")
+            return
+        }
+
+        mmdb.enumerate{ (bits:[UInt32], count: Int) in
+            let hex = bits.reduce("") { $0 +  String(format:"%08x", $1) }
+            print( "\(hex)/\(count)" )
+            
+            guard case let .value(v) = mmdb.search(value: bits, bits: count) else {
+                XCTFail("failed to searc \(hex)/\(count)")
+                return
+            }
+            v.dump()
+        }
+    }
+
+    func testGeoIP2ISPTest() throws {
+        guard let fileURL = Bundle.module.url(forResource: "GeoIP2-ISP-Test", withExtension: "mmdb", subdirectory: "test-data"),
+              let mmdb = MMDB(from: fileURL) else {
+            XCTFail("Failed to open MMDB")
+            return
+        }
+
+        mmdb.enumerate{ (bits:[UInt32], count: Int) in
+            let hex = bits.reduce("") { $0 +  String(format:"%08x", $1) }
+            print( "\(hex)/\(count)" )
+            
+            guard case let .value(v) = mmdb.search(value: bits, bits: count) else {
+                XCTFail("failed to searc \(hex)/\(count)")
+                return
+            }
+            v.dump()
+        }
+    }
+
+    func testGeoIP2PrecisionEnterpriseTest() throws {
+        guard let fileURL = Bundle.module.url(forResource: "GeoIP2-Precision-Enterprise-Test", withExtension: "mmdb", subdirectory: "test-data"),
+              let mmdb = MMDB(from: fileURL) else {
+            XCTFail("Failed to open MMDB")
+            return
+        }
+
+        mmdb.enumerate{ (bits:[UInt32], count: Int) in
+            let hex = bits.reduce("") { $0 +  String(format:"%08x", $1) }
+            print( "\(hex)/\(count)" )
+            
+            guard case let .value(v) = mmdb.search(value: bits, bits: count) else {
+                XCTFail("failed to searc \(hex)/\(count)")
+                return
+            }
+            v.dump()
+        }
+    }
+
+    func testGeoIP2StaticIPScoreTest() throws {
+        guard let fileURL = Bundle.module.url(forResource: "GeoIP2-Static-IP-Score-Test", withExtension: "mmdb", subdirectory: "test-data"),
+              let mmdb = MMDB(from: fileURL) else {
+            XCTFail("Failed to open MMDB")
+            return
+        }
+
+        mmdb.enumerate{ (bits:[UInt32], count: Int) in
+            let hex = bits.reduce("") { $0 +  String(format:"%08x", $1) }
+            print( "\(hex)/\(count)" )
+            
+            guard case let .value(v) = mmdb.search(value: bits, bits: count) else {
+                XCTFail("failed to searc \(hex)/\(count)")
+                return
+            }
+            v.dump()
+        }
+    }
+
+    func testGeoIP2UserCountTest() throws {
+        guard let fileURL = Bundle.module.url(forResource: "GeoIP2-User-Count-Test", withExtension: "mmdb", subdirectory: "test-data"),
+              let mmdb = MMDB(from: fileURL) else {
+            XCTFail("Failed to open MMDB")
+            return
+        }
+
+        mmdb.enumerate{ (bits:[UInt32], count: Int) in
+            let hex = bits.reduce("") { $0 +  String(format:"%08x", $1) }
+            print( "\(hex)/\(count)" )
+            
+            guard case let .value(v) = mmdb.search(value: bits, bits: count) else {
+                XCTFail("failed to searc \(hex)/\(count)")
+                return
+            }
+            v.dump()
+        }
+    }
+
+    func testGeoLite2ASNTest() throws {
+        guard let fileURL = Bundle.module.url(forResource: "GeoLite2-ASN-Test", withExtension: "mmdb", subdirectory: "test-data"),
+              let mmdb = MMDB(from: fileURL) else {
+            XCTFail("Failed to open MMDB")
+            return
+        }
+
+        mmdb.enumerate{ (bits:[UInt32], count: Int) in
+            let hex = bits.reduce("") { $0 +  String(format:"%08x", $1) }
+            print( "\(hex)/\(count)" )
+            
+            guard case let .value(v) = mmdb.search(value: bits, bits: count) else {
+                XCTFail("failed to searc \(hex)/\(count)")
+                return
+            }
+            v.dump()
+        }
+    }
+
+    func testGeoLite2CityTest() throws {
+        guard let fileURL = Bundle.module.url(forResource: "GeoLite2-City-Test", withExtension: "mmdb", subdirectory: "test-data"),
+              let mmdb = MMDB(from: fileURL) else {
+            XCTFail("Failed to open MMDB")
+            return
+        }
+
+        mmdb.enumerate{ (bits:[UInt32], count: Int) in
+            let hex = bits.reduce("") { $0 +  String(format:"%08x", $1) }
+            print( "\(hex)/\(count)" )
+            
+            guard case let .value(v) = mmdb.search(value: bits, bits: count) else {
+                XCTFail("failed to searc \(hex)/\(count)")
+                return
+            }
+            v.dump()
+        }
+    }
+
+    func testGeoLite2CountryTest() throws {
+        guard let fileURL = Bundle.module.url(forResource: "GeoLite2-Country-Test", withExtension: "mmdb", subdirectory: "test-data"),
+              let mmdb = MMDB(from: fileURL) else {
+            XCTFail("Failed to open MMDB")
+            return
+        }
+
+        mmdb.enumerate{ (bits:[UInt32], count: Int) in
+            let hex = bits.reduce("") { $0 +  String(format:"%08x", $1) }
+            print( "\(hex)/\(count)" )
+            
+            guard case let .value(v) = mmdb.search(value: bits, bits: count) else {
+                XCTFail("failed to searc \(hex)/\(count)")
+                return
+            }
+            v.dump()
+        }
+    }
+
+    func testGeoIP2CityTestBrokenDoubleFormat() throws {
+        guard let fileURL = Bundle.module.url(forResource: "GeoIP2-City-Test-Broken-Double-Format", withExtension: "mmdb", subdirectory: "test-data"),
+              let mmdb = MMDB(from: fileURL) else {
+            XCTFail("Failed to open MMDB")
+            return
+        }
+
+        mmdb.enumerate{ (bits:[UInt32], count: Int) in
+            let hex = bits.reduce("") { $0 +  String(format:"%08x", $1) }
+            print( "\(hex)/\(count)" )
+            
+            switch mmdb.search(value: bits, bits: count) {
+            case .value(let v):
+                v.dump()
+            case .notFound:
+                print("\(hex)/\(count)not found")
+            case .partial(_):
+                XCTFail("unexpected partial")
+            case .failed(let m):
+                print("READ FAILURE: \(m)")
+            }
+        }
+    }
+
+    func testGeoIP2CityTestInvalidNodeCount() throws {
+        guard let fileURL = Bundle.module.url(forResource: "GeoIP2-City-Test-Invalid-Node-Count", withExtension: "mmdb", subdirectory: "test-data"),
+              let mmdb = MMDB(from: fileURL) else {
+            return
+        }
+        XCTFail("Opened MMDB with insane node count: \(mmdb.nodeCount)")
+    }
+
+
 }
 

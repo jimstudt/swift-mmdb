@@ -34,7 +34,7 @@ public class MMDB {
                 return .string(s)
             case .double:
                 if bytes.count != 8 {
-                    fatalError("Wrong payload size to 'double' value")
+                    return nil
                 }
                 let r = bytes.withUnsafeBytes{ (_ body: (UnsafeRawBufferPointer)) -> Double in
                     let v = body.bindMemory(to: Double.self).baseAddress!.pointee
@@ -44,7 +44,7 @@ public class MMDB {
                 return .double(r)
             case .float:
                 if bytes.count != 4 {
-                    fatalError("Wrong payload size to 'float' value")
+                    return nil
                 }
                 let r = bytes.withUnsafeBytes{ (_ body: (UnsafeRawBufferPointer)) -> Float in
                     let v = body.bindMemory(to: Float.self).baseAddress!.pointee
@@ -348,12 +348,12 @@ public class MMDB {
     public init?( data: Data) {
         store = Store(data: data)
         
-        guard let offs = store.locateMetadata() else {
+        guard let metadataOffset = store.locateMetadata() else {
             return nil
         }
 
-        var p = offs
-        guard case let .map(metadata) = store.readValue(pointer: &p, sectionStart: offs) else {
+        var p = metadataOffset
+        guard case let .map(metadata) = store.readValue(pointer: &p, sectionStart: metadataOffset) else {
             print("Unable to read metadata")
             return nil
         }
@@ -388,6 +388,10 @@ public class MMDB {
         self.databaseType = databaseType
         
         searchTreeSize = ( ( self.recordSize * 2 ) / 8 ) * self.nodeCount
+        
+        if searchTreeSize > metadataOffset {
+            return nil  // Can't be right.
+        }
         
         dataSectionStart = searchTreeSize + 16
     }

@@ -1,10 +1,9 @@
 # To Do
 
-- Implement the rest of the Value types in MMDB
+- Double is almost certainly corrupted. Maybe byte order?
 - Work out an error strategy. I need to make sure a corrupted database can't 
   cause any array out of bounds errors and kill the program.
 - Eliminate all the `fatalError` calls in MMDB. Those are just me marking
   places I haven't implemented something.
-- Add more tests for the MaxMind test databases.
-- Move the IP address logic of GeoLite2's search into MMDB.
+- Add the 'bad' tests for the MaxMind test databases.
 
