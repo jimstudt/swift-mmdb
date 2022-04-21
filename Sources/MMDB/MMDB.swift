@@ -36,22 +36,16 @@ public class MMDB {
                 if bytes.count != 8 {
                     return nil
                 }
-                let r = bytes.withUnsafeBytes{ (_ body: (UnsafeRawBufferPointer)) -> Double in
-                    let v = body.bindMemory(to: Double.self).baseAddress!.pointee
-                    return v
-                }
+                let r = bytes.reduce(0, { ($0 << 8) | UInt64($1)} )
                 
-                return .double(r)
+                return .double( Double(bitPattern: r))
             case .float:
                 if bytes.count != 4 {
                     return nil
                 }
-                let r = bytes.withUnsafeBytes{ (_ body: (UnsafeRawBufferPointer)) -> Float in
-                    let v = body.bindMemory(to: Float.self).baseAddress!.pointee
-                    return v
-                }
-                
-                return .float(r)
+                let r = bytes.reduce(0, { ($0 << 8) | UInt32($1)} )
+
+                return .float( Float(bitPattern: r))
             case .bytes:
                 return .bytes( Array(bytes))
             case .uint16:
