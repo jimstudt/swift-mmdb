@@ -46,9 +46,16 @@ layer, but it isn't hard. Just feed addresses into its `.search` method.
 - It is possible to create a database file which will recurse beyond any 
   stack you might have. I do not have a limiter. Use a database you trust.
 - It is possible to generate an arithmetic exception from a corrupt database.
-- Some data types, (int32, uint128, float, dataCacheContainer, endMarker), are
+- Some data types, (dataCacheContainer, endMarker), are
   not implemented and will give you a `fatalError`. I need to find a database which
   uses them to test them.
+
+## Can I Use Thise?
+
+Yes! It is licensed under an MIT license, included in the source tree. If you have
+an attorney telling you that isn't good enough, contact me with what is good enough.
+
+Do pay attention to the MaxMind terms you agree to when you license their data.
 
 ## Building
 
@@ -57,7 +64,16 @@ layer, but it isn't hard. Just feed addresses into its `.search` method.
   checked out copy and `git submodule update --init --recursive` since Xcode and 
   `swift build` probably didn't do that for you. You only need to do that once after checkout.
   If your `Tests/MMDBTests/MaxMind-DB` directory is empty, then you need to do this.
-  
+
+## How Mature Is This?
+
+It works for me. I just use the GeoLite2-Country database. It "passes" all of the MaxMind
+"good" tests. I don't know the right answers, but it doesn't explode and looks reasonable. 
+It doesn't explode
+on any of the "bad-data" tests for corrupted databases, but many of those are corrupted in
+more than one way and this code bails out reading the metadata so we don't actually 
+test what was intended.
+
 ## What More Can I Get?
 
 [MaxMind](https://dev.maxmind.com/) has a number of databases for looking up
@@ -75,16 +91,17 @@ My personal blog keeps getting run over by spam comments which exclusively
 come from two countries. I want to prevent anonymous comments from just those
 countries.
 
-Debian has a `geoip-database` package which includes data from 
-[MaxMind's GeoLite2 database)](https://dev.maxmind.com/geoip/geolite2-free-geolocation-data)
-so that seems a good start. Sadly the only Swift library I found was a wrapper of the
-C library, and since I develop under macos and deploy on Debian, I didn't want to wrestle
-with the nusiance that is to build.
+Searching around I found the 
+[MaxMind's GeoLite2 database)](https://dev.maxmind.com/geoip/geolite2-free-geolocation-data) 
+is freely available and is kept reasonably current. Sadly the only Swift library I found was 
+a wrapper of the C library, and since I develop under macos and deploy on Debian, I didn't 
+want to wrestle with the nusiance that is to build.
 
 Since MaxMind publishes [MaxMind DB File Format Specification](https://maxmind.github.io/MaxMind-DB/), 
 how hard could it be to just read that directly…  
 
-Survey says: "Two half days with a sleep in between"
+Survey says: "Two half days with a sleep in between"… then 2 more days to integrate the
+tests and catch the defects and unimplemented features those revealed.
 
 
 
