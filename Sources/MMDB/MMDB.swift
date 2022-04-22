@@ -64,7 +64,7 @@ public class MMDB {
             case .uint128:
                 var b = Array(bytes)
                 if bytes.count < 16 {
-                    b = b + Array( repeating: 0, count: 16 - bytes.count)
+                    b = Array( repeating: 0, count: 16 - bytes.count) + b
                 }
                 let high = b[0..<8].reduce(0, { ($0 << 8) | UInt64($1)} )
                 let low = b[8..<16].reduce(0, { ($0 << 8) | UInt64($1)} )
