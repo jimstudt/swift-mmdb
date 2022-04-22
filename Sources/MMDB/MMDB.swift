@@ -216,21 +216,25 @@ public class MMDB {
                 
                 switch sz {
                 case 0:
+                    if pointer >= bytes.count { return nil }
                     let p = (b3 << 8) | UInt(bytes[pointer])
                     pointer += 1
                     var np : Int = sectionStart + Int(p)
                     return readValue(pointer: &np, sectionStart: sectionStart)
                 case 1:
+                    if pointer + 1 >= bytes.count { return nil }
                     let p = 2048 + ((b3 << 16) | ( UInt(bytes[pointer]) << 8) | UInt(bytes[pointer + 1]))
                     pointer += 2
                     var np : Int = sectionStart + Int(p)
                     return readValue(pointer: &np, sectionStart: sectionStart)
                 case 2:
+                    if pointer + 2 >= bytes.count { return nil }
                     let p = 526336 + ((b3 << 24) | ( UInt(bytes[pointer]) << 16) | (UInt(bytes[pointer + 1] << 8)) | UInt(bytes[pointer + 2]))
                     pointer += 3
                     var np : Int = sectionStart + Int(p)
                     return readValue(pointer: &np, sectionStart: sectionStart)
                 case 3:
+                    if pointer + 3 >= bytes.count { return nil }
                     let p = ( UInt(bytes[pointer]) << 24) | (UInt(bytes[pointer + 1]) << 16) |
                     ( UInt(bytes[pointer + 2]) << 8 ) | UInt(bytes[pointer + 3])
                     pointer += 4
@@ -246,12 +250,15 @@ public class MMDB {
             //
             switch payloadSize0 {
             case 29:
+                if pointer >= bytes.count { return nil }
                 payloadSize = 29 + Int(bytes[pointer])
                 pointer += 1
             case 30:
+                if pointer + 1 >= bytes.count { return nil }
                 payloadSize = 285 + (Int(bytes[pointer]) << 8) + Int(bytes[pointer+1])
                 pointer += 2
             case 31:
+                if pointer + 2 >= bytes.count { return nil }
                 payloadSize = 65821 + (Int(bytes[pointer]) << 16) + (Int(bytes[pointer+1]) << 8) + Int(bytes[pointer+2])
                 pointer += 3
             default:
@@ -285,7 +292,10 @@ public class MMDB {
                 }
                 return .array(result)
             case .pointer:
-                let p = bytes[pointer ..< pointer + payloadSize].reduce(0, { ($0 << 8) | UInt($1)} )
+                let past = pointer + payloadSize - 1
+                if past > bytes.count { return nil }
+
+                let p = bytes[pointer ..< past].reduce(0, { ($0 << 8) | UInt($1)} )
                 pointer += payloadSize
                 
                 var np : Int = sectionStart + Int(p)
@@ -293,7 +303,9 @@ public class MMDB {
             case .boolean:
                 return .boolean( payloadSize != 0)
             default:
-                let r = fieldType.scan(bytes: bytes[pointer ..< pointer + payloadSize])
+                let past = pointer + payloadSize
+                if past > bytes.count { return nil }
+                let r = fieldType.scan(bytes: bytes[pointer ..< past])
                 pointer += payloadSize
                 return r
             }
