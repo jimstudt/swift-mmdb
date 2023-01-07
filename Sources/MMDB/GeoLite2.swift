@@ -18,18 +18,18 @@ import Foundation
 /// address. The `countryCode` method is just an encapsulation of a common use case.
 /// 
 public class GeoLite2CountryDatabase : MMDB {
-    override public init?( data: Data) {
-        super.init(data: data)
+    override public init(data: Data) throws {
+        try super.init(data: data)
         
         // check that we really the right database type
-        if databaseType != "GeoLite2-Country" { return nil }
+        if metadata.databaseType != "GeoLite2-Country" { throw MMDBError.invalidDatabaseType(metadata.databaseType) }
     }
 
     /// Do the search from ascii numeric internet address but just fetch out the ISO country code.
     /// - Parameter address: A numeric IPv4 or IPv6 address as accepted by `inet_addr`
     /// or `inet_pton`
     /// - Returns: A two letter ISO country code, capitalized, or nil if not found (or error)
-    public func countryCode( address: String) -> String? {
+    public func countryCode(address: String) throws -> String? {
         switch search(address: address) {
         case .notFound:
             return nil
