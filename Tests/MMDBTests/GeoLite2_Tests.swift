@@ -27,12 +27,12 @@ class GeoLite2_Tests: XCTestCase {
             return
         }
         
-        guard let db = GeoLite2CountryDatabase(from: fileURL) else {
+        guard let db = try? GeoLite2CountryDatabase(from: fileURL) else {
             XCTFail("Failed to open MMDB")
             return
         }
         
-        XCTAssertEqual(db.databaseType, "GeoLite2-Country")
+        XCTAssertEqual(db.metadata.databaseType, "GeoLite2-Country")
         
         guard case let .value(core) = db.search(address: "2.125.160.216") else {
             XCTFail("Failed to search some EU address")
@@ -46,7 +46,7 @@ class GeoLite2_Tests: XCTestCase {
         }
         somewhere.dump()
         
-        XCTAssertEqual( db.countryCode(address: "2001:270::0"), "KR")
+        XCTAssertEqual(try db.countryCode(address: "2001:270::0"), "KR")
 
     }
 
@@ -56,7 +56,7 @@ class GeoLite2_Tests: XCTestCase {
             return
         }
 
-        guard let db = GeoLite2CountryDatabase(from: fileURL) else {
+        guard let db = try? GeoLite2CountryDatabase(from: fileURL) else {
             XCTFail("Failed to open MMDB")
             return
         }
@@ -93,7 +93,7 @@ class GeoLite2_Tests: XCTestCase {
             return
         }
 
-        guard let db = GeoLite2CountryDatabase(from: fileURL) else {
+        guard let db = try? GeoLite2CountryDatabase(from: fileURL) else {
             XCTFail("Failed to open MMDB")
             return
         }

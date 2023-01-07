@@ -16,14 +16,14 @@ let someIPv4Addresses = [ "2.125.160.216",
                           "217.65.48.0" ]
 
 final class MMDB_Tests: XCTestCase {
-    func readAllAcceptErrors( forResource: String, withExtension: String = "mmdb", subdirectory: String) {
-        guard let fileURL = Bundle.module.url(forResource: forResource, withExtension: withExtension, subdirectory: subdirectory),
-              let mmdb = MMDB(from: fileURL) else {
-            XCTFail("Failed to open MMDB")
+    func readAllAcceptErrors(forResource name: String, withExtension ext: String = "mmdb", subdirectory subpath: String) throws {
+        guard let fileURL = Bundle.module.url(forResource: name, withExtension: ext, subdirectory: subpath) else {
+            XCTFail("Could not find resource \(name) with extension \(ext) in subpath \(subpath).")
             return
         }
-
-        mmdb.enumerate{ (bits:[UInt32], count: Int) in
+        let mmdb = try MMDB(from: fileURL)
+        
+        try mmdb.enumerate{ bits, count in
             let hex = bits.reduce("") { $0 +  String(format:"%08x", $1) }
             print( "\(hex)/\(count)" )
             
@@ -40,19 +40,19 @@ final class MMDB_Tests: XCTestCase {
         }
     }
 
-    func readAll( forResource: String, withExtension: String = "mmdb", subdirectory: String) {
-        guard let fileURL = Bundle.module.url(forResource: forResource, withExtension: withExtension, subdirectory: subdirectory),
-              let mmdb = MMDB(from: fileURL) else {
+    func readAll(forResource: String, withExtension: String = "mmdb", subdirectory: String) throws {
+        guard let fileURL = Bundle.module.url(forResource: forResource, withExtension: withExtension, subdirectory: subdirectory) else {
             XCTFail("Failed to open MMDB")
             return
         }
+        let mmdb = try MMDB(from: fileURL)
         
-        mmdb.enumerate{ (bits:[UInt32], count: Int) in
+        try mmdb.enumerate{ bits, count in
             let hex = bits.reduce("") { $0 +  String(format:"%08x", $1) }
             print( "\(hex)/\(count)" )
             
             guard case let .value(v) = mmdb.search(value: bits, bits: count) else {
-                XCTFail("failed to searc \(hex)/\(count)")
+                XCTFail("failed to search \(hex)/\(count)")
                 return
             }
             v.dump()
@@ -68,7 +68,7 @@ final class MMDB_Tests: XCTestCase {
             return
         }
         
-        guard let mmdb = MMDB(from: fileURL) else {
+        guard let mmdb = try? MMDB(from: fileURL) else {
             XCTFail("Failed to open MMDB")
             return
         }
@@ -87,173 +87,170 @@ final class MMDB_Tests: XCTestCase {
     }
     
     func testIPv4_24() throws {
-        readAll(forResource: "MaxMind-DB-test-ipv4-24", subdirectory: "test-data")
+        try readAll(forResource: "MaxMind-DB-test-ipv4-24", subdirectory: "test-data")
     }
     
     func testIPv4_28() throws {
-        readAll(forResource: "MaxMind-DB-test-ipv4-28", subdirectory: "test-data")
+        try readAll(forResource: "MaxMind-DB-test-ipv4-28", subdirectory: "test-data")
     }
 
     func testIPv4_32() throws {
-        readAll(forResource: "MaxMind-DB-test-ipv4-32", subdirectory: "test-data")
+        try readAll(forResource: "MaxMind-DB-test-ipv4-32", subdirectory: "test-data")
     }
 
     func testIPv6_24() throws {
-        readAll(forResource: "MaxMind-DB-test-ipv6-24", subdirectory: "test-data")
+        try readAll(forResource: "MaxMind-DB-test-ipv6-24", subdirectory: "test-data")
     }
     
     func testIPv6_28() throws {
-        readAll(forResource: "MaxMind-DB-test-ipv6-28", subdirectory: "test-data")
+        try readAll(forResource: "MaxMind-DB-test-ipv6-28", subdirectory: "test-data")
     }
 
     func testIPv6_32() throws {
-        readAll(forResource: "MaxMind-DB-test-ipv6-32", subdirectory: "test-data")
+        try readAll(forResource: "MaxMind-DB-test-ipv6-32", subdirectory: "test-data")
     }
 
     func testIP_24() throws {
-        readAll(forResource: "MaxMind-DB-test-mixed-24", subdirectory: "test-data")
+        try readAll(forResource: "MaxMind-DB-test-mixed-24", subdirectory: "test-data")
     }
     
     func testIP_28() throws {
-        readAll(forResource: "MaxMind-DB-test-mixed-28", subdirectory: "test-data")
+        try readAll(forResource: "MaxMind-DB-test-mixed-28", subdirectory: "test-data")
     }
 
     func testIP_32() throws {
-        readAll(forResource: "MaxMind-DB-test-mixed-32", subdirectory: "test-data")
+        try readAll(forResource: "MaxMind-DB-test-mixed-32", subdirectory: "test-data")
     }
 
     func testNested() throws {
-        readAll(forResource: "MaxMind-DB-test-nested", subdirectory: "test-data")
+        try readAll(forResource: "MaxMind-DB-test-nested", subdirectory: "test-data")
     }
 
     func testPointerDecoder() throws {
-        readAll(forResource: "MaxMind-DB-test-pointer-decoder", subdirectory: "test-data")
+        try readAll(forResource: "MaxMind-DB-test-pointer-decoder", subdirectory: "test-data")
     }
 
     func testDecoder() throws {
-        readAll(forResource: "MaxMind-DB-test-decoder", subdirectory: "test-data")
+        try readAll(forResource: "MaxMind-DB-test-decoder", subdirectory: "test-data")
     }
 
     func testMetadataPointers() throws {
-        readAll(forResource: "MaxMind-DB-test-metadata-pointers", subdirectory: "test-data")
+        try readAll(forResource: "MaxMind-DB-test-metadata-pointers", subdirectory: "test-data")
     }
 
     func testStringValueEntries() throws {
-        readAll(forResource: "MaxMind-DB-string-value-entries", subdirectory: "test-data")
+        try readAll(forResource: "MaxMind-DB-string-value-entries", subdirectory: "test-data")
     }
 
     func testNoIPv4SearchTree() throws {
-        readAll(forResource: "MaxMind-DB-no-ipv4-search-tree", subdirectory: "test-data")
+        try readAll(forResource: "MaxMind-DB-no-ipv4-search-tree", subdirectory: "test-data")
     }
 
     func testBrokenPointers24() throws {
-        readAllAcceptErrors(forResource: "MaxMind-DB-test-broken-pointers-24", subdirectory: "test-data")
+        try readAllAcceptErrors(forResource: "MaxMind-DB-test-broken-pointers-24", subdirectory: "test-data")
     }
 
     func testBrokenSearchTree() throws {
-        readAllAcceptErrors(forResource: "MaxMind-DB-test-broken-search-tree-24", subdirectory: "test-data")
+        try readAllAcceptErrors(forResource: "MaxMind-DB-test-broken-search-tree-24", subdirectory: "test-data")
     }
 
     func testGeoIP2AnonymousIP() throws {
-        readAll(forResource: "GeoIP2-Anonymous-IP-Test", subdirectory: "test-data")
+        try readAll(forResource: "GeoIP2-Anonymous-IP-Test", subdirectory: "test-data")
     }
 
     func testGeoIP2CityTest() throws {
-        readAll(forResource: "GeoIP2-City-Test", subdirectory: "test-data")
+        try readAll(forResource: "GeoIP2-City-Test", subdirectory: "test-data")
     }
 
     func testGeoIP2ConnectionTypeTest() throws {
-        readAll(forResource: "GeoIP2-Connection-Type-Test", subdirectory: "test-data")
+        try readAll(forResource: "GeoIP2-Connection-Type-Test", subdirectory: "test-data")
     }
 
     func testGeoIP2DensityIncomeTest() throws {
-        readAll(forResource: "GeoIP2-DensityIncome-Test", subdirectory: "test-data")
+        try readAll(forResource: "GeoIP2-DensityIncome-Test", subdirectory: "test-data")
     }
 
     func testGeoIP2DomainTest() throws {
-        readAll(forResource: "GeoIP2-Domain-Test", subdirectory: "test-data")
+        try readAll(forResource: "GeoIP2-Domain-Test", subdirectory: "test-data")
     }
 
     func testGeoIP2EnterpriseTest() throws {
-        readAll(forResource: "GeoIP2-Enterprise-Test", subdirectory: "test-data")
+        try readAll(forResource: "GeoIP2-Enterprise-Test", subdirectory: "test-data")
     }
 
     func testGeoIP2ISPTest() throws {
-        readAll(forResource: "GeoIP2-ISP-Test", subdirectory: "test-data")
+        try readAll(forResource: "GeoIP2-ISP-Test", subdirectory: "test-data")
     }
 
     func testGeoIP2PrecisionEnterpriseTest() throws {
-        readAll(forResource: "GeoIP2-Precision-Enterprise-Test", subdirectory: "test-data")
+        try readAll(forResource: "GeoIP2-Precision-Enterprise-Test", subdirectory: "test-data")
     }
 
     func testGeoIP2StaticIPScoreTest() throws {
-        readAll(forResource: "GeoIP2-Static-IP-Score-Test", subdirectory: "test-data")
+        try readAll(forResource: "GeoIP2-Static-IP-Score-Test", subdirectory: "test-data")
     }
 
     func testGeoIP2UserCountTest() throws {
-        readAll(forResource: "GeoIP2-User-Count-Test", subdirectory: "test-data")
+        try readAll(forResource: "GeoIP2-User-Count-Test", subdirectory: "test-data")
     }
 
     func testGeoLite2ASNTest() throws {
-        readAll(forResource: "GeoLite2-ASN-Test", subdirectory: "test-data")
+        try readAll(forResource: "GeoLite2-ASN-Test", subdirectory: "test-data")
     }
 
     func testGeoLite2CityTest() throws {
-        readAll(forResource: "GeoLite2-City-Test", subdirectory: "test-data")
+        try readAll(forResource: "GeoLite2-City-Test", subdirectory: "test-data")
     }
 
     func testGeoLite2CountryTest() throws {
-        readAll(forResource: "GeoLite2-Country-Test", subdirectory: "test-data")
+        try readAll(forResource: "GeoLite2-Country-Test", subdirectory: "test-data")
     }
 
     func testGeoIP2CityTestBrokenDoubleFormat() throws {
-        readAllAcceptErrors(forResource: "GeoIP2-City-Test-Broken-Double-Format", subdirectory: "test-data")
+        try readAllAcceptErrors(forResource: "GeoIP2-City-Test-Broken-Double-Format", subdirectory: "test-data")
     }
 
     func testGeoIP2CityTestInvalidNodeCount() throws {
         guard let fileURL = Bundle.module.url(forResource: "GeoIP2-City-Test-Invalid-Node-Count", withExtension: "mmdb", subdirectory: "test-data"),
-              let mmdb = MMDB(from: fileURL) else {
+              let mmdb = try? MMDB(from: fileURL) else {
             return
         }
-        XCTFail("Opened MMDB with insane node count: \(mmdb.nodeCount)")
+        XCTFail("Opened MMDB with insane node count: \(mmdb.metadata.nodeCount)")
     }
 
     func testCyclicDataStructure() throws {
-        readAllAcceptErrors(forResource: "cyclic-data-structure", subdirectory: "bad-data/maxminddb-golang")
+        XCTAssertThrowsError(try readAllAcceptErrors(forResource: "cyclic-data-structure", subdirectory: "bad-data/maxminddb-golang"))
     }
     
     func testInvalidBytesLength() throws {
-        readAllAcceptErrors(forResource: "invalid-bytes-length", subdirectory: "bad-data/maxminddb-golang")
+        XCTAssertThrowsError(try readAllAcceptErrors(forResource: "invalid-bytes-length", subdirectory: "bad-data/maxminddb-golang"))
     }
 
     func testInvalidDataRecordOffset() throws {
-        readAllAcceptErrors(forResource: "invalid-data-record-offset", subdirectory: "bad-data/maxminddb-golang")
+        XCTAssertThrowsError(try readAllAcceptErrors(forResource: "invalid-data-record-offset", subdirectory: "bad-data/maxminddb-golang"))
     }
 
     func testInvalidMapKeyLength() throws {
-        readAllAcceptErrors(forResource: "invalid-map-key-length", subdirectory: "bad-data/maxminddb-golang")
+        XCTAssertThrowsError(try readAllAcceptErrors(forResource: "invalid-map-key-length", subdirectory: "bad-data/maxminddb-golang"))
     }
 
     func testInvalidStringLength() throws {
-        readAllAcceptErrors(forResource: "invalid-string-length", subdirectory: "bad-data/maxminddb-golang")
+        XCTAssertThrowsError(try readAllAcceptErrors(forResource: "invalid-string-length", subdirectory: "bad-data/maxminddb-golang"))
     }
 
     func testMetadataIsAnUInt128() throws {
-        readAllAcceptErrors(forResource: "metadata-is-an-uint128", subdirectory: "bad-data/maxminddb-golang")
+        XCTAssertThrowsError(try readAllAcceptErrors(forResource: "metadata-is-an-uint128", subdirectory: "bad-data/maxminddb-golang"))
     }
 
     func testUnexpectedBytes() throws {
-        readAllAcceptErrors(forResource: "unexpected-bytes", subdirectory: "bad-data/maxminddb-golang")
+        XCTAssertThrowsError(try readAllAcceptErrors(forResource: "unexpected-bytes", subdirectory: "bad-data/maxminddb-golang"))
     }
 
     func testBadUnicodeInMapKey() throws {
-        readAllAcceptErrors(forResource: "bad-unicode-in-map-key", subdirectory: "bad-data/maxminddb-python")
+        try readAllAcceptErrors(forResource: "bad-unicode-in-map-key", subdirectory: "bad-data/maxminddb-python")
     }
 
     func testOffsetIntegerOverflow() throws {
-        readAllAcceptErrors(forResource: "libmaxminddb-offset-integer-overflow", subdirectory: "bad-data/maxminddb-golang")
+        XCTAssertThrowsError(try readAllAcceptErrors(forResource: "libmaxminddb-offset-integer-overflow", subdirectory: "bad-data/libmaxminddb"))
     }
-
-
 }
-
